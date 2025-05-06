@@ -2,6 +2,9 @@ import streamlit as st
 import time
 from PIL import Image
 import numpy as np
+import firebase_admin
+from firebase_admin import credentials, db
+import time
 
 
 def toggle_lockdown():
