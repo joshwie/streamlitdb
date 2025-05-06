@@ -6,6 +6,9 @@ import firebase_admin
 from firebase_admin import credentials, db
 import time
 
+import os
+st.write("Aktuelles Verzeichnis:", os.getcwd())
+st.write("Dateien:", os.listdir("sensitivity_analysis"))
 
 def toggle_lockdown():
     st.session_state["lockdown_disabled"] = lockdown_yes_no
