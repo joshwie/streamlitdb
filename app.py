@@ -6,6 +6,7 @@ import numpy as np
 import firebase_admin
 from firebase_admin import credentials, firestore
 
+# Firebase initialisieren
 if not firebase_admin._apps:
     cred = credentials.Certificate({
         "type": st.secrets["type"],
@@ -19,20 +20,18 @@ if not firebase_admin._apps:
         "auth_provider_x509_cert_url": st.secrets["auth_provider_x509_cert_url"],
         "client_x509_cert_url": st.secrets["client_x509_cert_url"]
     })
-    app = firebase_admin.initialize_app(cred)
-else:
-    app = firebase_admin.get_app()
+    firebase_admin.initialize_app(cred)
 
-# Jetzt sicher Firestore-Client holen – mit App-Referenz
-db = firestore.client(app)
+# 🔥 WICHTIG: Gib die Projekt-ID explizit an!
+db = firestore.client(project=st.secrets["project_id"])
 
-# Testzugriff
-doc_ref = db.collection("test").document("streamlit_check")
-doc_ref.set({"status": "läuft!"})
+# Firestore-Test
+doc_ref = db.collection("test").document("streamlit_test")
+doc_ref.set({"status": "erfolgreich verbunden!"})
 doc = doc_ref.get()
 
-st.success("✅ Firestore verbunden!")
-st.write(doc.to_dict())
+st.success("✅ Firestore ist verbunden!")
+st.json(doc.to_dict())
 
 
 def toggle_lockdown():
