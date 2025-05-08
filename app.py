@@ -28,19 +28,22 @@ def generate_group_code():
     digit = random.choice(string.digits)
     return f"{letter}{digit}"
 
-# Gruppencode im Session-State speichern
+# Gruppencode initialisieren
 if "group_code" not in st.session_state:
     st.session_state.group_code = generate_group_code()
 
-# Titel und Gruppencode anzeigen
+# Titel anzeigen
 st.title("Pandemie-Interventionsplan")
-st.subheader(f"🔖 Gruppencode: {st.session_state.group_code}")
 
 # Alternative manuelle Eingabe
+st.subheader(f"🔖 Gruppencode: {st.session_state.group_code}")
 st.markdown("**... oder alternativ Gruppencode manuell eingeben:**")
-manual_code = st.text_input("Gruppencode eingeben (z. B. A1)", value="", max_chars=2)
-if manual_code:
+manual_code = st.text_input("Gruppencode eingeben (z. B. A1)", value=st.session_state.group_code, max_chars=2)
+
+# Gruppencode übernehmen, wenn geändert
+if manual_code.upper() != st.session_state.group_code:
     st.session_state.group_code = manual_code.upper()
+    st.experimental_rerun()
 
 # Navigation horizontal oben
 selected_tab = st.radio("", ["Szenarien einzeln analysieren", "Szenarien gemeinsam vergleichen"], horizontal=True)
