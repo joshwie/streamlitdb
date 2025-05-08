@@ -6,12 +6,31 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-# Use the application default credentials.
-cred = credentials.ApplicationDefault()
+from firebase_admin import credentials, firestore
 
-firebase_admin.initialize_app(cred)
+if 'firebase_app' not in st.session_state:
+    cred = credentials.Certificate({
+        "type": st.secrets["type"],
+        "project_id": st.secrets["project_id"],
+        "private_key_id": st.secrets["private_key_id"],
+        "private_key": st.secrets["private_key"].replace('\\n', '\n'),
+        "client_email": st.secrets["client_email"],
+        "client_id": st.secrets["client_id"],
+        "auth_uri": st.secrets["auth_uri"],
+        "token_uri": st.secrets["token_uri"],
+        "auth_provider_x509_cert_url": st.secrets["auth_provider_x509_cert_url"],
+        "client_x509_cert_url": st.secrets["client_x509_cert_url"]
+    })
+    firebase_admin.initialize_app(cred)
+    st.session_state.firebase_app = True
+
 db = firestore.client()
-import time
+
+# Schreibe Daten
+if st.button("Speichern"):
+    doc_ref = db.collection("test_collection").document("example_doc")
+    doc_ref.set({"message": "Hallo Firestore!"})
+    st.success("Gespeichert")
 
 
 def toggle_lockdown():
