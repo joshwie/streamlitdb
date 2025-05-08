@@ -6,7 +6,7 @@ import numpy as np
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# Nur einmal initialisieren
+# initialize firebase db if not existing
 if not firebase_admin._apps:
     cred = credentials.Certificate({
         "type": st.secrets["type"],
@@ -25,15 +25,13 @@ if not firebase_admin._apps:
         'projectId': st.secrets["project_id"]
     })
 
-# Jetzt Firestore verwenden
+# use Firestore
 db = firestore.client()
 
-# Beispielzugriff
+# example 
 doc_ref = db.collection("test").document("demo")
-doc_ref.set({"status": "läuft!"})
+doc_ref.set({"abc": "def!"})
 doc = doc_ref.get()
-
-st.write("Firestore-Daten:", doc.to_dict())
 
 def toggle_lockdown():
     st.session_state["lockdown_disabled"] = lockdown_yes_no
