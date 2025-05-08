@@ -43,7 +43,7 @@ manual_code = st.text_input("... oder alternativ Gruppencode manuell eingeben (z
 # Gruppencode übernehmen, wenn geändert
 if manual_code.upper() != st.session_state.group_code:
     st.session_state.group_code = manual_code.upper()
-    st.experimental_set_query_params(updated="1")
+    st.st.query_params.(updated="1")
 
 # Navigation horizontal oben
 selected_tab = st.radio("", ["Szenarien einzeln analysieren", "Szenarien gemeinsam vergleichen"], horizontal=True)
