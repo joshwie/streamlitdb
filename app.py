@@ -38,12 +38,12 @@ st.title("Pandemie-Interventionsplan")
 # Alternative manuelle Eingabe
 st.subheader(f"🔖 Gruppencode: {st.session_state.group_code}")
 st.markdown("**... oder alternativ Gruppencode manuell eingeben:**")
-manual_code = st.text_input("Gruppencode eingeben (z. B. A1)", value=st.session_state.group_code, max_chars=2)
+manual_code = st.text_input("Gruppencode eingeben (z. B. A1)", value=st.session_state.group_code, max_chars=2, key="manual_code_input")
 
 # Gruppencode übernehmen, wenn geändert
 if manual_code.upper() != st.session_state.group_code:
     st.session_state.group_code = manual_code.upper()
-    st.experimental_rerun()
+    st.experimental_set_query_params(updated="1")
 
 # Navigation horizontal oben
 selected_tab = st.radio("", ["Szenarien einzeln analysieren", "Szenarien gemeinsam vergleichen"], horizontal=True)
