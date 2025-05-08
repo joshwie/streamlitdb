@@ -2,12 +2,11 @@ import streamlit as st
 import time
 from PIL import Image
 import numpy as np
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
 
+import firebase_admin
 from firebase_admin import credentials, firestore
 
+# Nur einmal initialisieren
 if not firebase_admin._apps:
     cred = credentials.Certificate({
         "type": st.secrets["type"],
@@ -21,9 +20,20 @@ if not firebase_admin._apps:
         "auth_provider_x509_cert_url": st.secrets["auth_provider_x509_cert_url"],
         "client_x509_cert_url": st.secrets["client_x509_cert_url"]
     })
-    firebase_admin.initialize_app(cred)
 
+    firebase_admin.initialize_app(cred, {
+        'projectId': st.secrets["project_id"]
+    })
+
+# Jetzt Firestore verwenden
 db = firestore.client()
+
+# Beispielzugriff
+doc_ref = db.collection("test").document("demo")
+doc_ref.set({"status": "läuft!"})
+doc = doc_ref.get()
+
+st.write("Firestore-Daten:", doc.to_dict())
 
 # Schreibe Daten
 if st.button("Speichern"):
