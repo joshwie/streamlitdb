@@ -55,8 +55,14 @@ images = doc.to_dict().get("images", []) if doc.exists else []
 if selected_tab == "Szenarien einzeln analysieren":
     st.header("Szenarien einzeln analysieren")
     if images:
-        for url in images:
-            st.image(url, width=500)
+        # Gruppiere Bilder in 5er-Blöcke für Tabs
+        grouped_images = [images[i:i+5] for i in range(0, len(images), 5)]
+        tab_labels = [f"Szenario {i+1}" for i in range(len(grouped_images))]
+        tabs = st.tabs(tab_labels)
+        for tab, image_group in zip(tabs, grouped_images):
+            with tab:
+                for url in image_group:
+                    st.image(url, use_container_width=True)
     else:
         st.info("Keine Bilder für diesen Gruppencode vorhanden.")
 
@@ -66,6 +72,6 @@ elif selected_tab == "Szenarien gemeinsam vergleichen":
         cols = st.columns(2)
         for i, url in enumerate(images):
             with cols[i % 2]:
-                st.image(url, caption=f"Bild {i+1}", use_column_width=True)
+                st.image(url, caption=f"Bild {i+1}", use_container_width=True)
     else:
         st.info("Keine Bilder für diesen Gruppencode vorhanden.")
