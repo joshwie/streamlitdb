@@ -8,7 +8,7 @@ from firebase_admin import firestore
 
 from firebase_admin import credentials, firestore
 
-if 'firebase_app' not in st.session_state:
+if not firebase_admin._apps:
     cred = credentials.Certificate({
         "type": st.secrets["type"],
         "project_id": st.secrets["project_id"],
@@ -22,7 +22,6 @@ if 'firebase_app' not in st.session_state:
         "client_x509_cert_url": st.secrets["client_x509_cert_url"]
     })
     firebase_admin.initialize_app(cred)
-    st.session_state.firebase_app = True
 
 db = firestore.client()
 
