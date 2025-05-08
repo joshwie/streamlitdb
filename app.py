@@ -43,7 +43,7 @@ manual_code = st.text_input("... oder alternativ Gruppencode manuell eingeben (z
 # Gruppencode übernehmen, wenn geändert
 if manual_code.upper() != st.session_state.group_code:
     st.session_state.group_code = manual_code.upper()
-    st.query_params.update(updated="1")
+    st.rerun()
 
 # Navigation horizontal oben
 selected_tab = st.radio("", ["Szenarien einzeln analysieren", "Szenarien gemeinsam vergleichen"], horizontal=True)
@@ -67,7 +67,7 @@ if selected_tab == "Szenarien einzeln analysieren":
                 for url in image_group:
                     st.image(url, use_container_width=True)
     else:
-        st.info("Keine Bilder für diesen Gruppencode vorhanden.")
+        st.info(f"Keine Bilder für Gruppencode '{code}' vorhanden.")
 
 elif selected_tab == "Szenarien gemeinsam vergleichen":
     st.header("Szenarien gemeinsam vergleichen")
@@ -77,4 +77,4 @@ elif selected_tab == "Szenarien gemeinsam vergleichen":
             with cols[i % 2]:
                 st.image(url, caption=f"Bild {i+1}", use_container_width=True)
     else:
-        st.info("Keine Bilder für diesen Gruppencode vorhanden.")
+        st.info(f"Keine Bilder für Gruppencode '{code}' vorhanden.")
