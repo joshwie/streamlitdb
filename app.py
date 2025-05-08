@@ -6,6 +6,8 @@ import numpy as np
 import firebase_admin
 from firebase_admin import credentials, firestore
 
+st.write(st.secrets["project_id"])
+
 # Nur einmal initialisieren
 if not firebase_admin._apps:
     cred = credentials.Certificate({
