@@ -56,28 +56,37 @@ images = doc.to_dict().get("images", []) if doc.exists else []
 
 # Anzeige der Szenarien
 if selected_tab == "Szenarien einzeln analysieren":
-    st.header("Szenarien einzeln analysieren")
+    st.header("🔍 Szenarien einzeln analysieren")
     if images:
-        cols = st.columns(2)
-        for i, url in enumerate(images):
-            if i == len(images) - 1:
-                st.image(url, use_container_width=True)
-            else:
+        # Gruppiere Bilder in 5er-Blöcke für Tabs
+        grouped_images = [images[i:i+5] for i in range(0, len(images), 5)]
+        tab_labels = [f"Szenario {i+1}" for i in range(len(grouped_images))]
+        tabs = st.tabs(tab_labels)
+        for tab, image_group in zip(tabs, grouped_images):
+            with tab:
+                cols = st.columns(5)
+                for url in image_group:
+                    with cols[image_group.index(url) % 5]:
+                        st.image(url, use_container_width=True)
+    else:
                 with cols[i % 2]:
                     st.image(url, use_container_width=True)
     else:
         st.info(f"Keine Bilder für Gruppencode '{code}' vorhanden.")
 
 elif selected_tab == "Szenarien gemeinsam vergleichen":
-    st.header("Szenarien gemeinsam vergleichen")
+    st.header("🤔 Szenarien gemeinsam vergleichen")
     if images:
         # Gruppiere Bilder in 5er-Blöcke für Kategorien
         grouped_images = [images[i:i+5] for i in range(0, len(images), 5)]
-        for i, group in enumerate(grouped_images):
-            with st.expander(f"Kategorie {i+1}"):
-                cols = st.columns(5)
-                for j, url in enumerate(group):
-                    with cols[j % 5]:
-                        st.image(url, use_container_width=True)
+        num_kategorien = len(grouped_images[0]) if grouped_images else 0
+
+        for k in range(num_kategorien):
+            with st.expander(f"Kategorie {k+1}"):
+                cols = st.columns(len(grouped_images))
+                for s, group in enumerate(grouped_images):
+                    if k < len(group):
+                        with cols[s]:
+                            st.image(group[k], use_container_width=True)
     else:
         st.info(f"Keine Bilder für Gruppencode '{code}' vorhanden.")
