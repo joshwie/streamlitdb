@@ -4,7 +4,7 @@ from firebase_admin import credentials, firestore
 import random
 import string
 
-# Firebase initialization
+# Firebase-Initialisierung
 if not firebase_admin._apps:
     cred = credentials.Certificate({
         "type": st.secrets["type"],
@@ -22,44 +22,44 @@ if not firebase_admin._apps:
 
 db = firestore.client()
 
-# Generate random group code (1 letter + 1 digit)
+# Zufälligen Gruppencode erzeugen (1 Buchstabe + 1 Ziffer)
 def generate_group_code():
     letter = random.choice(string.ascii_uppercase)
     digit = random.choice(string.digits)
     return f"{letter}{digit}"
 
-# Store group code in session state
+# Gruppencode im Session-State speichern
 if "group_code" not in st.session_state:
     st.session_state.group_code = generate_group_code()
 
-# Title and group code display
-st.title("Pandemic Intervention Plan")
-st.subheader(f"🧬 Group Code: {st.session_state.group_code}")
+# Titel und Gruppencode anzeigen
+st.title("Pandemie-Interventionsplan")
+st.subheader(f"🧬 Gruppencode: {st.session_state.group_code}")
 
-# Sidebar navigation
-selected_tab = st.sidebar.radio("Navigation", ["Analyze Scenarios", "Compare Scenarios"])
+# Navigation in der Seitenleiste
+selected_tab = st.sidebar.radio("Navigation", ["Szenarien analysieren", "Szenarien vergleichen"])
 
-# Fetch data from Firestore
+# Daten aus Firestore abrufen
 code = st.session_state.group_code
 doc_ref = db.collection("szenarien").document(code)
 doc = doc_ref.get()
 images = doc.to_dict().get("images", []) if doc.exists else []
 
-# Display logic based on tab selection
-if selected_tab == "Analyze Scenarios":
-    st.header("Analyze Scenarios")
+# Anzeige der Szenarien
+if selected_tab == "Szenarien analysieren":
+    st.header("Szenarien analysieren")
     if images:
         for url in images:
             st.image(url, width=500)
     else:
-        st.info("No images available for this group code.")
+        st.info("Keine Bilder für diesen Gruppencode vorhanden.")
 
-elif selected_tab == "Compare Scenarios":
-    st.header("Compare Scenarios")
+elif selected_tab == "Szenarien vergleichen":
+    st.header("Szenarien vergleichen")
     if images:
         cols = st.columns(2)
         for i, url in enumerate(images):
             with cols[i % 2]:
-                st.image(url, caption=f"Image {i+1}", use_column_width=True)
+                st.image(url, caption=f"Bild {i+1}", use_column_width=True)
     else:
-        st.info("No comparison data available.")
+        st.info("Noch keine Vergleichsdaten vorhanden.")
