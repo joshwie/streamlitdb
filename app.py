@@ -3,7 +3,14 @@ import time
 from PIL import Image
 import numpy as np
 import firebase_admin
+from firebase_admin import credentials
 from firebase_admin import firestore
+
+# Use the application default credentials.
+cred = credentials.ApplicationDefault()
+
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 import time
 
 
