@@ -60,8 +60,11 @@ if selected_tab == "Szenarien einzeln analysieren":
     if images:
         cols = st.columns(2)
         for i, url in enumerate(images):
-            with cols[i % 2]:
-                st.image(url, caption=f"Bild {i+1}", use_container_width=True)
+            if i == len(images) - 1:
+                st.image(url, use_container_width=True)
+            else:
+                with cols[i % 2]:
+                    st.image(url, use_container_width=True)
     else:
         st.info(f"Keine Bilder für Gruppencode '{code}' vorhanden.")
 
