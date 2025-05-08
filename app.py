@@ -68,9 +68,7 @@ if selected_tab == "Szenarien einzeln analysieren":
                 for url in image_group:
                     with cols[image_group.index(url) % 5]:
                         st.image(url, use_container_width=True)
-    else:
-                with cols[i % 2]:
-                    st.image(url, use_container_width=True)
+
     else:
         st.info(f"Keine Bilder für Gruppencode '{code}' vorhanden.")
 
