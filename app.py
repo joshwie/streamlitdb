@@ -46,7 +46,7 @@ if manual_code.upper() != st.session_state.group_code:
     st.rerun()
 
 # Navigation horizontal oben
-selected_tab = st.radio("", ["Szenarien einzeln ansehen", "Szenarien nebeneinander vergleichen"], horizontal=True)
+selected_tab = st.radio("", ["Szenarien einzeln analysieren", "Szenarien gemeinsam vergleichen"], horizontal=True)
 
 # Daten aus Firestore abrufen
 code = st.session_state.group_code
