@@ -35,9 +35,9 @@ if "group_code" not in st.session_state:
     st.session_state.group_code = generate_group_code()
 
 # Titel & Gruppencode-Eingabe
-st.title("Pandemieausbrüche unter der Lupe – gemeinsame Analyse")
-st.subheader(f"🔖 Gruppen-Code: {st.session_state.group_code}")
-manual_code = st.text_input("... oder alternativ Gruppen-Code manuell eingeben (z. B. A1)", value=st.session_state.group_code, max_chars=2, key="manual_code_input")
+st.title("Pandemieausbrüche unter der Lupe – Ergebnisse gemeinsam analysieren")
+st.subheader(f"🔖 Klassen-Code: {st.session_state.group_code}")
+manual_code = st.text_input("... oder alternativ Klassen-Code manuell eingeben (z. B. A1)", value=st.session_state.group_code, max_chars=2, key="manual_code_input")
 
 if manual_code.upper() != st.session_state.group_code:
     st.session_state.group_code = manual_code.upper()
