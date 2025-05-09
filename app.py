@@ -59,7 +59,7 @@ if selected_tab == "Szenarien einzeln analysieren":
     st.header("🔍 Szenarien einzeln analysieren")
     if images:
         grouped_images = [images[i:i+5] for i in range(0, len(images), 5)]
-        tab_labels = [f"{gruppenname} – Szenario {i+1}" if gruppenname else f"Szenario {i+1}" for i in range(len(grouped_images))]
+        tab_labels = [gruppenname if gruppenname else f"Szenario {i+1}" for i in range(len(grouped_images))]
         tabs = st.tabs(tab_labels)
 
         for i, (tab, image_group) in enumerate(zip(tabs, grouped_images)):
@@ -77,7 +77,7 @@ if selected_tab == "Szenarien einzeln analysieren":
                 if st.button(f"🗑️ Szenario {i+1} löschen", key=f"delete_szenario_{i}"):
                     images_to_keep = images[:i*5] + images[(i+1)*5:]
                     db.collection("szenarien").document(code).update({"images": images_to_keep})
-                    st.experimental_rerun()
+                    st.rerun()
     else:
         st.info(f"Keine Bilder für Gruppencode '{code}' vorhanden.")
 
