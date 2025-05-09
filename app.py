@@ -1,3 +1,51 @@
+import streamlit as st
+import firebase_admin
+from firebase_admin import credentials, firestore
+import random
+import string
+
+# ⬅️ Volle Breite aktivieren
+st.set_page_config(layout="wide")
+
+# Firebase-Initialisierung
+if not firebase_admin._apps:
+    cred = credentials.Certificate({
+        "type": st.secrets["type"],
+        "project_id": st.secrets["project_id"],
+        "private_key_id": st.secrets["private_key_id"],
+        "private_key": st.secrets["private_key"].replace('\n', '\n'),
+        "client_email": st.secrets["client_email"],
+        "client_id": st.secrets["client_id"],
+        "auth_uri": st.secrets["auth_uri"],
+        "token_uri": st.secrets["token_uri"],
+        "auth_provider_x509_cert_url": st.secrets["auth_provider_x509_cert_url"],
+        "client_x509_cert_url": st.secrets["client_x509_cert_url"]
+    })
+    firebase_admin.initialize_app(cred)
+
+db = firestore.client()
+
+# Gruppencode erzeugen
+def generate_group_code():
+    letter = random.choice(string.ascii_uppercase)
+    digit = random.choice(string.digits)
+    return f"{letter}{digit}"
+
+if "group_code" not in st.session_state:
+    st.session_state.group_code = generate_group_code()
+
+# Titel & Gruppencode-Eingabe
+st.title("Pandemieausbrüche unter der Lupe – gemeinsame Analyse")
+st.subheader(f"🔖 Gruppen-Code: {st.session_state.group_code}")
+manual_code = st.text_input("... oder alternativ Gruppen-Code manuell eingeben (z. B. A1)", value=st.session_state.group_code, max_chars=2, key="manual_code_input")
+
+if manual_code.upper() != st.session_state.group_code:
+    st.session_state.group_code = manual_code.upper()
+    st.rerun()
+
+# Tabs oben
+selected_tab = st.radio("Navigation", ["Szenarien einzeln analysieren", "Szenarien gemeinsam vergleichen"], horizontal=True, label_visibility="collapsed")
+
 # Daten laden
 code = st.session_state.group_code
 doc_ref = db.collection("szenarien").document(code)
