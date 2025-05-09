@@ -4,6 +4,9 @@ from firebase_admin import credentials, firestore
 import random
 import string
 
+# ⬅️ Volle Breite aktivieren
+st.set_page_config(layout="wide")
+
 # Firebase-Initialisierung
 if not firebase_admin._apps:
     cred = credentials.Certificate({
@@ -22,79 +25,76 @@ if not firebase_admin._apps:
 
 db = firestore.client()
 
-# Zufälligen Gruppencode erzeugen (1 Buchstabe + 1 Ziffer)
+# Gruppencode erzeugen
 def generate_group_code():
     letter = random.choice(string.ascii_uppercase)
     digit = random.choice(string.digits)
     return f"{letter}{digit}"
 
-# Gruppencode initialisieren
 if "group_code" not in st.session_state:
     st.session_state.group_code = generate_group_code()
 
-# Titel anzeigen
-st.title("Pandemieausbrüche unter der Lupe - gemeinsame Analyse")
-
-# Alternative manuelle Eingabe
+# Titel & Gruppencode-Eingabe
+st.title("Pandemieausbrüche unter der Lupe – gemeinsame Analyse")
 st.subheader(f"🔖 Gruppen-Code: {st.session_state.group_code}")
-
 manual_code = st.text_input("... oder alternativ Gruppen-Code manuell eingeben (z. B. A1)", value=st.session_state.group_code, max_chars=2, key="manual_code_input")
 
-# Gruppencode übernehmen, wenn geändert
 if manual_code.upper() != st.session_state.group_code:
     st.session_state.group_code = manual_code.upper()
     st.rerun()
 
-# Navigation horizontal oben
-selected_tab = st.radio("", ["Szenarien einzeln analysieren", "Szenarien gemeinsam vergleichen"], horizontal=True)
+# Tabs oben
+selected_tab = st.radio("Navigation", ["Szenarien einzeln analysieren", "Szenarien gemeinsam vergleichen"], horizontal=True, label_visibility="collapsed")
 
-# Daten aus Firestore abrufen
+# Daten laden
 code = st.session_state.group_code
 doc_ref = db.collection("szenarien").document(code)
 doc = doc_ref.get()
-images = doc.to_dict().get("images", []) if doc.exists else []
+data = doc.to_dict() if doc.exists else {}
+images = data.get("images", [])
+gruppenname = data.get("gruppenname", "").strip()
 
-# Anzeige der Szenarien
+# EINZELN ANALYSIEREN
 if selected_tab == "Szenarien einzeln analysieren":
     st.header("🔍 Szenarien einzeln analysieren")
     if images:
-        # Gruppiere Bilder in 5er-Blöcke für Tabs
         grouped_images = [images[i:i+5] for i in range(0, len(images), 5)]
-        tab_labels = [f"Szenario {i+1}" for i in range(len(grouped_images))]
+        tab_labels = [f"{gruppenname} – Szenario {i+1}" if gruppenname else f"Szenario {i+1}" for i in range(len(grouped_images))]
         tabs = st.tabs(tab_labels)
-        for tab, image_group in zip(tabs, grouped_images):
+
+        for i, (tab, image_group) in enumerate(zip(tabs, grouped_images)):
             with tab:
-                for i in range(0, 4, 2):
+                for j in range(0, 4, 2):
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.image(image_group[i], use_container_width=True)
+                        st.image(image_group[j], use_container_width=True)
                     with col2:
-                        st.image(image_group[i + 1], use_container_width=True)
-                
-                # Letztes Bild in voller Breite
+                        st.image(image_group[j + 1], use_container_width=True)
                 if len(image_group) == 5:
                     st.image(image_group[4], use_container_width=True)
 
+                # 🗑️ Button zum Löschen dieses Szenarios
+                if st.button(f"🗑️ Szenario {i+1} löschen", key=f"delete_szenario_{i}"):
+                    images_to_keep = images[:i*5] + images[(i+1)*5:]
+                    db.collection("szenarien").document(code).update({"images": images_to_keep})
+                    st.experimental_rerun()
     else:
         st.info(f"Keine Bilder für Gruppencode '{code}' vorhanden.")
 
+# VERGLEICH
 elif selected_tab == "Szenarien gemeinsam vergleichen":
     st.header("🤔 Szenarien gemeinsam vergleichen")
     if images:
-        # Gruppiere Bilder in 5er-Blöcke für Kategorien
         grouped_images = [images[i:i+5] for i in range(0, len(images), 5)]
-        num_kategorien = len(grouped_images[0]) if grouped_images else 0
-
         category_labels = [
-    "Infektionsverlauf (SIR)",
-    "Infektions-Stati im Zeitverlauf",
-    "Infektionen nach Ort",
-    "Infektionen nach Alter",
-    "Neue Diagnosen nach Alter"
-]
+            "Infektionsverlauf (SIR)",
+            "Infektions-Stati im Zeitverlauf",
+            "Infektionen nach Ort",
+            "Infektionen nach Alter",
+            "Neue Diagnosen nach Alter"
+        ]
 
         transposed_groups = list(zip(*grouped_images))
-
         for k, category_images in enumerate(transposed_groups):
             label = category_labels[k] if k < len(category_labels) else f"Kategorie {k+1}"
             with st.expander(label):
