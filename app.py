@@ -33,7 +33,7 @@ if "group_code" not in st.session_state:
     st.session_state.group_code = generate_group_code()
 
 # Titel anzeigen
-st.title("Pandemieausbrüche unter der Lupe")
+st.title("Pandemieausbrüche unter der Lupe - gemeinsame Analyse")
 
 # Alternative manuelle Eingabe
 st.subheader(f"🔖 Gruppencode: {st.session_state.group_code}")
