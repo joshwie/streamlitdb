@@ -36,9 +36,9 @@ if "group_code" not in st.session_state:
 st.title("Pandemieausbrüche unter der Lupe - gemeinsame Analyse")
 
 # Alternative manuelle Eingabe
-st.subheader(f"🔖 Gruppencode: {st.session_state.group_code}")
+st.subheader(f"🔖 Gruppen-Code: {st.session_state.group_code}")
 
-manual_code = st.text_input("... oder alternativ Gruppencode manuell eingeben (z. B. A1)", value=st.session_state.group_code, max_chars=2, key="manual_code_input")
+manual_code = st.text_input("... oder alternativ Gruppen-Code manuell eingeben (z. B. A1)", value=st.session_state.group_code, max_chars=2, key="manual_code_input")
 
 # Gruppencode übernehmen, wenn geändert
 if manual_code.upper() != st.session_state.group_code:
