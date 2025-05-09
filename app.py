@@ -33,7 +33,7 @@ if "group_code" not in st.session_state:
     st.session_state.group_code = generate_group_code()
 
 # Titel anzeigen
-st.title("Pandemieausbrüche unter der Lupe: gemeinsame Analyse")
+st.title("Pandemieausbrüche unter der Lupe - gemeinsame Analyse")
 
 # Alternative manuelle Eingabe
 st.subheader(f"🔖 Gruppencode: {st.session_state.group_code}")
@@ -46,7 +46,7 @@ if manual_code.upper() != st.session_state.group_code:
     st.rerun()
 
 # Navigation horizontal oben
-selected_tab = st.radio("", ["🔍Szenarien einzeln analysieren", "🤔Szenarien gemeinsam vergleichen"], horizontal=True)
+selected_tab = st.radio("", ["Szenarien einzeln analysieren", "Szenarien gemeinsam vergleichen"], horizontal=True)
 
 # Daten aus Firestore abrufen
 code = st.session_state.group_code
@@ -56,7 +56,7 @@ images = doc.to_dict().get("images", []) if doc.exists else []
 
 # Anzeige der Szenarien
 if selected_tab == "Szenarien einzeln analysieren":
-    st.header("Szenarien einzeln analysieren")
+    st.header("🔍 Szenarien einzeln analysieren")
     if images:
         # Gruppiere Bilder in 5er-Blöcke für Tabs
         grouped_images = [images[i:i+5] for i in range(0, len(images), 5)]
@@ -79,7 +79,7 @@ if selected_tab == "Szenarien einzeln analysieren":
         st.info(f"Keine Bilder für Gruppencode '{code}' vorhanden.")
 
 elif selected_tab == "Szenarien gemeinsam vergleichen":
-    st.header("Szenarien gemeinsam vergleichen")
+    st.header("🤔 Szenarien gemeinsam vergleichen")
     if images:
         # Gruppiere Bilder in 5er-Blöcke für Kategorien
         grouped_images = [images[i:i+5] for i in range(0, len(images), 5)]
