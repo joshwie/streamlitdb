@@ -64,10 +64,16 @@ if selected_tab == "Szenarien einzeln analysieren":
         tabs = st.tabs(tab_labels)
         for tab, image_group in zip(tabs, grouped_images):
             with tab:
-                cols = st.columns(5)
-                for url in image_group:
-                    with cols[image_group.index(url) % 5]:
-                        st.image(url, use_container_width=True)
+                for i in range(0, 4, 2):
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.image(image_group[i], use_container_width=True)
+                    with col2:
+                        st.image(image_group[i + 1], use_container_width=True)
+                
+                # Letztes Bild in voller Breite
+                if len(image_group) == 5:
+                    st.image(image_group[4], use_container_width=True)
 
     else:
         st.info(f"Keine Bilder für Gruppencode '{code}' vorhanden.")
